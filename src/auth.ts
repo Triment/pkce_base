@@ -1,12 +1,12 @@
-import PKCE from 'js-pkce';
 import { createRemoteJWKSet, jwtVerify } from 'jose';
+import PKCE from 'js-pkce';
 // URL constructor is globally available in modern browsers/environments
 
 // --- Configuration ---
 const AUTH_DOMAIN = 'openid.nmmm.top'; // Define domain centrally
 const WEB_CLIENT_ID = 'f9b1d60f-f1df-43b6-9787-bb6d91fc81d4';
 const DESKTOP_CLIENT_ID = '5c86e993-1d56-498d-b461-514f7ee88ca7';
-const WEB_REDIRECT_URI = 'http://localhost:1420/'; // Ensure this matches your dev server
+const WEB_REDIRECT_URI = 'http://localhost:1420/login/callback'; // Ensure this matches your dev server
 const DESKTOP_REDIRECT_URI = 'games-helper://localhost/'; // Custom scheme for Tauri
 
 // --- Platform Detection ---
@@ -50,6 +50,43 @@ export const exchangeToken = async (url: string) => {
   return await pkceInstance.exchangeForAccessToken(url);
 };
 
+/**
+ * Attempts to refresh the access token using a refresh token.
+ * @param refreshToken The refresh token to use.
+ * @returns The new token response object (similar to exchangeToken).
+ */
+export const refreshTokenFlow = async (refreshToken: string) => {
+  const tokenEndpoint = `https://${AUTH_DOMAIN}/api/token`;
+  const params = new URLSearchParams();
+  params.append('grant_type', 'refresh_token');
+  params.append('refresh_token', refreshToken);
+  params.append('client_id', CLIENT_ID);
+  // Note: PKCE code_verifier is NOT sent during refresh token grant
+
+  try {
+    const response = await fetch(tokenEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: params.toString(),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({})); // Try to parse error details
+      console.error('Refresh token request failed:', response.status, errorData);
+      throw new Error(`Failed to refresh token: ${response.status} ${errorData.error_description || response.statusText}`);
+    }
+
+    const tokenData = await response.json();
+    // The response should contain new access_token, potentially a new refresh_token, expires_in, etc.
+    return tokenData;
+  } catch (error) {
+    console.error('Error during token refresh:', error);
+    // Re-throw the error to be handled by the caller
+    throw error;
+  }
+};
 
 // --- Token Verification ---
 
