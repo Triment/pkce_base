@@ -1,12 +1,17 @@
 import React from 'react';
 import { Button } from '@heroui/react'; // Assuming Button is the correct import
 // Removed icon import for now
-import { getAuthUrl } from '../auth'; // Adjust path if needed
+import { getAuthUrl, getPlatform } from '../auth'; // Adjust path if needed
+import { openUrl } from '@tauri-apps/plugin-opener'
 
 const LoginPage: React.FC = () => {
   const handleLogin = () => {
     const authUrl = getAuthUrl();
-    window.location.href = authUrl; // Redirect user to the auth provider
+    if (getPlatform() === 'desktop') {
+      openUrl(authUrl);
+    } else {
+      window.location.href = authUrl; // Redirect user to the auth provider
+    }
   };
 
   return (

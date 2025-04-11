@@ -17,6 +17,7 @@
     "@tauri-apps/plugin-deep-link": "^2.2.1",
     "@tauri-apps/plugin-opener": "^2",
     "framer-motion": "^12.6.3",
+    "jose": "^6.0.10",
     "jotai": "^2.12.2",
     "js-pkce": "^2.0.0",
     "react": "^19.1.0",

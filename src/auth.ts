@@ -3,7 +3,7 @@ import PKCE from 'js-pkce';
 // URL constructor is globally available in modern browsers/environments
 
 // --- Configuration ---
-const AUTH_DOMAIN = 'openid.nmmm.top'; // Define domain centrally
+const AUTH_DOMAIN = 'openid.reqack.com'; // Define domain centrally
 const WEB_CLIENT_ID = 'f9b1d60f-f1df-43b6-9787-bb6d91fc81d4';
 const DESKTOP_CLIENT_ID = '5c86e993-1d56-498d-b461-514f7ee88ca7';
 const WEB_REDIRECT_URI = 'http://localhost:1420/login/callback'; // Ensure this matches your dev server
